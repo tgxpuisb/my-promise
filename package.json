@@ -1,0 +1,22 @@
+{
+  "name": "my-promise",
+  "version": "1.0.0",
+  "description": "implement promise by self",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test/adapter.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tgxpuisb/my-promise.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tgxpuisb/my-promise/issues"
+  },
+  "homepage": "https://github.com/tgxpuisb/my-promise#readme",
+  "devDependencies": {
+    "promises-aplus-tests": "^2.1.2"
+  }
+}
