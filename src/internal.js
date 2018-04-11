@@ -1,5 +1,3 @@
-import { resolve } from 'dns';
-
 const {
     objectOrFunction,
     isFunction
