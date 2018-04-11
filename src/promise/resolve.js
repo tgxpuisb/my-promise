@@ -10,5 +10,6 @@ module.exports = function resolve (object) {
     }
 
     let promise = new Constructor(noop)
+    _resolve(promise, object)
     return promise
 }
