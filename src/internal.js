@@ -44,7 +44,7 @@ function tryThen (then, value, fulfillmentHandler, rejectionHandler) {
         return e
     }
 }
-
+// 处理带有.then方法的对象使用
 function handleForeignThenable (promise, thenable, then) {
     asap((promise) => {
         let sealed = false
@@ -74,6 +74,7 @@ function handleForeignThenable (promise, thenable, then) {
 }
 
 function handleOwnThenable (promise, thenable) {
+    // 对promise进行处理,根据具体状态判断
     if (thenable._state === FULFILLED) {
         fulfill(promise, thenable._result)
     } else if (thenable._state === REJECTED) {
@@ -88,14 +89,17 @@ function handleMaybeThenable (promise, maybeThenable, then) {
         && then === originalThen
         && maybeThenable.constructor.resolve === originalResolve
     ) {
+        // 判断如果真返resolve了一个promise的值
         handleOwnThenable(promise, maybeThenable)
     } else {
         if (then === TRY_CATCH_ERROR) {
             reject(promise, TRY_CATCH_ERROR.error)
             TRY_CATCH_ERROR.error = null
         } else if (then === undefined) {
+            // 如果发现不是promise则走正常的状态变更
             fulfill(promise, maybeThenable)
         } else if (isFunction(then)) {
+            // resolve的值如果是一个实现了then方法的对象
             handleForeignThenable(promise, maybeThenable, then)
         } else {
             fulfill(promise, maybeThenable)
@@ -105,8 +109,10 @@ function handleMaybeThenable (promise, maybeThenable, then) {
 
 function resolve (promise, value) {
     if (promise === value) {
+        // Promise.resolve()
         reject(promise, selfFulFillment())
     } else if (objectOrFunction(value)) {
+        // 可能存在要resolve一个新的promise
         handleMaybeThenable(promise, value, getThen(value))
     } else {
         fulfill(promise, value)
@@ -119,7 +125,7 @@ function publishRejection (promise) {
     }
     publish(promise)
 }
-
+// 把状态设置为fulfill
 function fulfill (promise, value) {
     if (promise._state !== PENDING) {
         return
@@ -143,6 +149,7 @@ function reject (promise, reason) {
     asap(publishRejection, promise)
 }
 
+// 把promise任务丢到队列中去
 function subscribe (parent, child, onFulfillment, onRejection) {
     let { _subscribers } = parent
     let { length } = _subscribers
@@ -190,15 +197,16 @@ function tryCatch (callback, detail) {
         return TRY_CATCH_ERROR
     }
 }
-
+// 触发回调函数用
 function invokeCallback (settled, promise, callback, detail) {
     let hasCallback = isFunction(callback)
     let value, error, succeeded, failed
 
     if (hasCallback) {
-        value = tryCatch(callback, detail)
+        value = tryCatch(callback, detail) // 这里的value就是.then回调函数执行之后的返回值
 
         if (value === TRY_CATCH_ERROR) {
+            // 如果报错
             failed = true
             error = value.error
             value.error = null
@@ -207,6 +215,7 @@ function invokeCallback (settled, promise, callback, detail) {
         }
 
         if (promise === value) {
+            // 不可以在.then的回调函数中返回自己
             reject(promise, cannotReturnOwn())
             return
         }
@@ -214,7 +223,7 @@ function invokeCallback (settled, promise, callback, detail) {
         value = detail
         succeeded = true
     }
-
+    // 根据不同的情况判断是resolve还是reject
     if (promise_state !== PENDING) {
         // NOOP
     } else if (hasCallback && succeeded) {
@@ -245,7 +254,7 @@ let id = 0
 function nextId () {
     return id++
 }
-
+// 制造一个空的promise
 function makePromise (promise) {
     promise[PROMISE_ID] = id++
     promise._state = undefined
