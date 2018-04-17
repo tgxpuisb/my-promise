@@ -30,7 +30,7 @@ function needsNew () {
 
 class Promise {
     constructor (resolver) {
-        this[PROMISE_ID] = nextId()
+        this[PROMISE_ID] = nextId() // promise_id 方便根据id找promise
         this._result = this._state = undefined
         this._subscribers = []
 
@@ -46,7 +46,9 @@ class Promise {
     catch (onRejection) {
         return this.then(null, onRejection)
     }
-    finally (callback) {}
+    finally (callback) {
+        // 非标准, 类似于try catch finally
+    }
 }
 
 Promise.prototype.then = then
