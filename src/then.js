@@ -24,7 +24,7 @@ module.exports = function then (onFulfillment, onRejection) {
 
     // 一开始new出来的promise都是undefined,只有Promise.xxx之后才会有state
     if (_state) {
-        // 如果有_state
+        // 如果有_state,则必须立刻触发回调
         const callback = arguments[_state - 1] // 拿到与state状态对应的回调,可能是onFulfillment也可能是onRejection,取决于状态
         asap(() => invokeCallback(_state, child, callback, parent._result))
         // 把一个回调函数丢到里面排队,并且len != 2 的那种
