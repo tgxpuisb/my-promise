@@ -31,7 +31,7 @@ function needsNew () {
 class Promise {
     constructor (resolver) {
         this[PROMISE_ID] = nextId() // promise_id 方便根据id找promise
-        this._result = this._state = undefined
+        this._result = this._state = undefined // 一个 Promise 的当前状态必须为以下三种状态中的一种：等待态（Pending）、执行态（Fulfilled）和拒绝态（Rejected）
         this._subscribers = []
 
         if (noop !== resolver) {
